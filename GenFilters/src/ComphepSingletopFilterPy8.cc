@@ -37,30 +37,31 @@ using namespace HepMC;
  ComphepSingletopFilterPy8::ComphepSingletopFilterPy8(const edm::ParameterSet& iConfig):
  token_(consumes<edm::HepMCProduct>(edm::InputTag(iConfig.getUntrackedParameter("moduleLabel",std::string("generator")),"unsmeared")))
 {	
-	ptsep = iConfig.getParameter<double>("pTSep");
+	_ptsep = iConfig.getParameter<double>("pTSep");
 }
 
 ComphepSingletopFilterPy8::~ComphepSingletopFilterPy8() {}
 
 void ComphepSingletopFilterPy8::beginJob() 
 { 
-    read22 = read23 = 0;
-    pass22 = pass23 = 0;
-    hardLep = 23; //identifies the "hard part" in Pythia8
+    _read22 = _read23 = 0;
+    _pass22 = _pass23 = 0;
+    _hardLep = 23; //identifies the "hard part" in Pythia8
  }
 
 void ComphepSingletopFilterPy8::endJob() 
 {
     cout << "Proc:     2-->2     2-->3     Total" << endl;
-    cout << boost::format("Read: %9d %9d %9d") % read22 % read23 % (read22+read23)
+    cout << boost::format("Read: %9d %9d %9d") % _read22 % _read23 % (_read22+_read23)
          << endl;
-    cout << boost::format("Pass: %9d %9d %9d") % pass22 % pass23 % (pass22+pass23)
+    cout << boost::format("Pass: %9d %9d %9d") % _pass22 % _pass23 % (_pass22+_pass23)
          << endl;
 }
 
-
-bool ComphepSingletopFilterPy8::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
+bool ComphepSingletopFilterPy8::filter(edm::StreamID,edm::Event& iEvent, const edm::EventSetup& iSetup) const
 {
+double ptsep=_ptsep;
+int read22=_read22, read23=_read23, pass22=_pass22, pass23=_pass23, hardLep=_hardLep;
   
   
 edm::Handle<edm::HepMCProduct> evt;
@@ -333,6 +334,7 @@ cerr << "ERROR: ComphepSingletopFilterPy8: HepMC inconsistency (No add b vertex 
         pass = ptsep <= pt;
         if (pass) pass23 += 1;
     }
+
  return pass;
 }
 
