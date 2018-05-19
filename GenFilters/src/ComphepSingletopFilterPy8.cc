@@ -35,27 +35,21 @@ using namespace std;
 using namespace HepMC;
 
  ComphepSingletopFilterPy8::ComphepSingletopFilterPy8(const edm::ParameterSet& iConfig):
- token_(consumes<edm::HepMCProduct>(edm::InputTag(iConfig.getUntrackedParameter("moduleLabel",std::string("generator")),"unsmeared")))
-{	
-	_ptsep = iConfig.getParameter<double>("pTSep");
+ token_(consumes<edm::HepMCProduct>(edm::InputTag(iConfig.getUntrackedParameter("moduleLabel",std::string("generator")),"unsmeared"))),_ptsep(iConfig.getParameter<double>("pTSep")),_read22(0),_read23(0),_pass22(0),_pass23(0),_hardLep(23)//identifies the "hard part" in Pythia8
+{
 }
 
 ComphepSingletopFilterPy8::~ComphepSingletopFilterPy8() {}
 
 void ComphepSingletopFilterPy8::beginJob() 
 { 
-    _read22 = _read23 = 0;
-    _pass22 = _pass23 = 0;
-    _hardLep = 23; //identifies the "hard part" in Pythia8
- }
+}
 
 void ComphepSingletopFilterPy8::endJob() 
 {
-    cout << "Proc:     2-->2     2-->3     Total" << endl;
-    cout << boost::format("Read: %9d %9d %9d") % _read22 % _read23 % (_read22+_read23)
-         << endl;
-    cout << boost::format("Pass: %9d %9d %9d") % _pass22 % _pass23 % (_pass22+_pass23)
-         << endl;
+    edm::LogInfo("ComphepSingletopFilterPy8::endJob") << "Proc:     2-->2     2-->3     Total" << endl;
+    edm::LogInfo("ComphepSingletopFilterPy8::endJob") << boost::format("Read: %9d %9d %9d") % _read22 % _read23 % (_read22+_read23) << endl;
+    edm::LogInfo("ComphepSingletopFilterPy8::endJob") << boost::format("Pass: %9d %9d %9d") % _pass22 % _pass23 % (_pass22+_pass23) << endl;
 }
 
 bool ComphepSingletopFilterPy8::filter(edm::StreamID,edm::Event& iEvent, const edm::EventSetup& iSetup) const
@@ -138,7 +132,7 @@ vector<const GenParticle *> vgp_b_t;
     
     if (! gp_clep) 
     {
-        cout << "ERROR: ComphepSingletopFilterPy8: no charged lepton" << endl;
+        edm::LogError("ComphepSingletopFilterPy8::filter") << "ERROR:  no charged lepton" << endl;
         return false;
     }
 
@@ -238,7 +232,7 @@ bool process22 = (vgp_bsec.empty()); //if there is no aditional b-quark in prima
         }
         if (! gv) 
         {
-            cerr << "ERROR: ComphepSingletopFilterPy8: HepMC inconsistency (! gv)" << endl;
+            edm::LogError("ComphepSingletopFilterPy8::filter") << "ERROR: HepMC inconsistency (! gv)" << endl;
             myEvt->print();
             return false;
         }
@@ -278,7 +272,7 @@ int loopCount = 0, gv_loopCount = 0;
 
       if (loopCount > 100)//loop protection, nothing more 
       {
-cerr << "ERROR: ComphepSingletopFilterPy8: HepMC inconsistency (No add b vertex found)" << endl;
+          edm::LogError("ComphepSingletopFilterPy8::filter") << "ERROR:  HepMC inconsistency (No add b vertex found)" << endl;
 	break;
       }
     }
@@ -315,7 +309,7 @@ cerr << "ERROR: ComphepSingletopFilterPy8: HepMC inconsistency (No add b vertex 
 
     if (vgp_bsec.empty()) 
     {
-        cerr << "ERROR: ComphepSingletopFilterPy8: HepMC inconsistency (vgp_bsec.size() == 0)" << endl;
+        edm::LogError("ComphepSingletopFilterPy8::filter")  << "ERROR:  HepMC inconsistency (vgp_bsec.size() == 0)" << endl;
         return false;
     }
     

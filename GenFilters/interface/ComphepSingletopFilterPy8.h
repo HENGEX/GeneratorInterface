@@ -28,8 +28,8 @@ private:
     void endJob() override ;
     edm::EDGetTokenT<edm::HepMCProduct> token_;
 private:
-    double _ptsep;
-    int _read22, _read23, _pass22, _pass23, _hardLep;
+    const double _ptsep;
+    const int _read22, _read23, _pass22, _pass23, _hardLep;
 };
 
 #endif
