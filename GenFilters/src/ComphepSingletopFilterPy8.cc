@@ -29,7 +29,7 @@
 
 #include "HepMC/IO_GenEvent.h"
 
-
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
 using namespace std;
 using namespace HepMC;

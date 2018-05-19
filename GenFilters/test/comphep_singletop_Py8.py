@@ -16,6 +16,7 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 # The following three lines reduce the clutter of repeated printouts
 # of the same exception message.
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
+process.MessageLogger = cms.Service("MessageLogger")
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
 
